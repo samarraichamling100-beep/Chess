@@ -203,23 +203,53 @@ class BOARD{
             return false;
         }
     }
-    bool IsValidWhiteBishopMove(PieceData & Piece,Vector2Int AttemptedMove){
-        if(AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0){
-            std::cout << "The white move is not valid" << std::endl;
+    bool IsValidWhiteBishopMove(PieceData &Piece, Vector2Int AttemptedMove) {
+        if (AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0) {
+            std::cout << "The white move is not valid (Out of bounds)" << std::endl;
             return false;
         }
-        int diffX = abs(AttemptedMove.x - Piece.BoardPosition.x);
-        int diffY = abs(AttemptedMove.y - Piece.BoardPosition.y);
+        if (Piece.BoardPosition.x == AttemptedMove.x && Piece.BoardPosition.y == AttemptedMove.y) {
+            std::cout << "The white move is not valid (Cannot stay on the same square)" << std::endl;
+            return false;
+        }
+        int dx = AttemptedMove.x - Piece.BoardPosition.x;
+        int dy = AttemptedMove.y - Piece.BoardPosition.y;
+        //Used AI on this
+        if (std::abs(dx) != std::abs(dy)) {
+            std::cout << "The white move is not valid (Not a diagonal line)" << std::endl;
+            return false;
+        }
+        return true;
+    }
+    bool IsValidBlackBishopMove(PieceData &Piece, Vector2Int AttemptedMove){
+        if (AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0) {
+            std::cout << "The white move is not valid (Out of bounds)" << std::endl;
+            return false;
+        }
+        if (Piece.BoardPosition.x == AttemptedMove.x && Piece.BoardPosition.y == AttemptedMove.y) {
+            std::cout << "The white move is not valid (Cannot stay on the same square)" << std::endl;
+            return false;
+        }
+        //Used AI on this
+        int dx = AttemptedMove.x - Piece.BoardPosition.x;
+        int dy = AttemptedMove.y - Piece.BoardPosition.y;
 
-        if (diffX == 0) {
-            return false; 
-        }
-        if (diffX == diffY) {
-            std::cout << "Valid White Bishop Move" << std::endl;
-            return true;
-        }
+        if (std::abs(dx) != std::abs(dy)) {
+            std::cout << "The white move is not valid (Not a diagonal line)" << std::endl;
             return false;
         }
+        return true;
+    }
+    bool IsValidWhiteRookMove(PieceData &Piece, Vector2Int AttemptedMove){
+        if (AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0) {
+            std::cout << "The white move is not valid (Out of bounds)" << std::endl;
+            return false;
+        }
+        if (Piece.BoardPosition.x == AttemptedMove.x && Piece.BoardPosition.y == AttemptedMove.y) {
+            std::cout << "The white move is not valid (Cannot stay on the same square)" << std::endl;
+            return false;
+        }
+    }
     void MovePiece(std::vector<PieceData> & PiecesList,Vector2 Pointer){
         for(PieceData & piece : PiecesList){
             if(piece.selected){
@@ -277,10 +307,10 @@ class BOARD{
                             std::cout << "Piece has been unselected" << std::endl;
                         }
                     }
-                    if(piece.str_value == "wb"){
-                        std::cout << "White Bishop is found" << '\n';
-                        if(IsValidWhiteBishopMove(piece,AttemptedToMovePos)){
-                            std::cout << "The White bishop move is valid " << '\n';
+                    if(piece.str_value == "bb"){
+                        std::cout << "Black Bishop is found" << '\n';
+                        if(IsValidBlackBishopMove(piece,AttemptedToMovePos)){
+                            std::cout << "The Black bishop move is valid " << '\n';
                             piece.BoardPosition.x = AttemptedToMovePos.x;
                             piece.BoardPosition.y = AttemptedToMovePos.y;
                             piece.selected = false;

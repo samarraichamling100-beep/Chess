@@ -91,7 +91,7 @@ class PIECES{
                     ImageResize(&WhiteBishopImage,cellsize,cellsize);
                     WhiteBishop.textur = LoadTextureFromImage(WhiteBishopImage);
                     WhiteBishop.BoardPosition = {row,col};
-                    WhiteBishop.str_value = "wp";
+                    WhiteBishop.str_value = "wb";
                     PiecesList.push_back(WhiteBishop);
                 }
                 if(ChessGrid[col][row] == "wq"){
@@ -100,6 +100,7 @@ class PIECES{
                     ImageResize(&WhiteQueenImage,cellsize,cellsize);
                     WhiteQueen.textur = LoadTextureFromImage(WhiteQueenImage);
                     WhiteQueen.BoardPosition = {row,col};
+                    WhiteQueen.str_value = "wq";
                     PiecesList.push_back(WhiteQueen);
                 }
                 if(ChessGrid[col][row] == "wK"){
@@ -108,6 +109,7 @@ class PIECES{
                     ImageResize(&WhiteKingImage,cellsize,cellsize);
                     WhiteKing.textur = LoadTextureFromImage(WhiteKingImage);
                     WhiteKing.BoardPosition = {row,col};
+                    WhiteKing.str_value     = "wK";
                     PiecesList.push_back(WhiteKing);
                 }
                 if(ChessGrid[col][row] == "wr"){
@@ -116,7 +118,9 @@ class PIECES{
                     ImageResize(&WhiteRookImage,cellsize,cellsize);
                     WhiteRook.textur = LoadTextureFromImage(WhiteRookImage);
                     WhiteRook.BoardPosition = {row,col};
+                    WhiteRook.str_value     = "wr";
                     PiecesList.push_back(WhiteRook);
+
                 }
                 if(ChessGrid[col][row] == "bp"){
                     PieceData Blackpawn;
@@ -143,6 +147,7 @@ class PIECES{
                     ImageResize(&BlackBishopImage,cellsize,cellsize);
                     BlackBishop.textur = LoadTextureFromImage(BlackBishopImage);
                     BlackBishop.BoardPosition = {row,col};
+                    BlackBishop.str_value = "bb";
                     PiecesList.push_back(BlackBishop);
                 }
                 if(ChessGrid[col][row] == "bq"){
@@ -151,6 +156,7 @@ class PIECES{
                     ImageResize(&BlackQueenImage,cellsize,cellsize);
                     BlackQueen.textur = LoadTextureFromImage(BlackQueenImage);
                     BlackQueen.BoardPosition = {row,col};
+                    BlackQueen.str_value = "bq";
                     PiecesList.push_back(BlackQueen);
                 }
                 if(ChessGrid[col][row] == "bK"){
@@ -159,6 +165,7 @@ class PIECES{
                     ImageResize(&BlackKingImage,cellsize,cellsize);
                     BlackKing.textur = LoadTextureFromImage(BlackKingImage);
                     BlackKing.BoardPosition = {row,col};
+                    BlackKing.str_value = "bK";
                     PiecesList.push_back(BlackKing);
                 }
                 if(ChessGrid[col][row] == "br"){
@@ -167,6 +174,7 @@ class PIECES{
                     ImageResize(&BlackRookImage,cellsize,cellsize);
                     BlackRook.textur = LoadTextureFromImage(BlackRookImage);
                     BlackRook.BoardPosition = {row,col};
+                    BlackRook.str_value     = "br";
                     PiecesList.push_back(BlackRook);
                 }
             }
