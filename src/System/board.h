@@ -13,8 +13,19 @@ class BOARD{
     Vector2Int AttemptedToMovePos{};
     //So the mouse doesnt get detected twice
     int movecooldown{};
-
+    Sound MoveSound = setup_sound();
     public:
+
+    Sound setup_sound(){
+        Wave moveSound = LoadWave(R"(../GameGraphics\Sound\chessTakes.mp3)");
+        float StartingSecond = 0.9f;
+        float EndingSecond   = 1.3f;
+        int StartFrame = (int)(StartingSecond * moveSound.sampleRate);
+        int EndFrame = (int)(EndingSecond * moveSound.sampleRate);
+        WaveCrop(&moveSound,StartFrame,EndFrame);
+        Sound sound = LoadSoundFromWave(moveSound);
+        return sound;
+    }
     std::string ChessGrid[8][8] = 
     {
         {"wr","wk","wb","wK","wq","wb","wk","wr"},
@@ -88,12 +99,24 @@ class BOARD{
         }
     }
     bool IsValidWhitePawnMove(PieceData & Piece,Vector2Int AttemptedMove){
-        if(AttemptedMove.y == Piece.BoardPosition.y + 1){
+        if (AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0) {
+            std::cout << "The white move is not valid (Out of bounds)" << std::endl;
+            return false;
+        }
+        else if (Piece.BoardPosition.x == AttemptedMove.x && Piece.BoardPosition.y == AttemptedMove.y) {
+            std::cout << "The white move is not valid (Cannot stay on the same square)" << std::endl;
+            return false;
+        }
+        else if(AttemptedMove.y == Piece.BoardPosition.y + 1 && AttemptedMove.x == Piece.BoardPosition.x){
             return true;
         }
-        if(Piece.has_moved == false && AttemptedMove.y == Piece.BoardPosition.y + 2){
+        else if(Piece.has_moved == false && AttemptedMove.y == Piece.BoardPosition.y + 2 && AttemptedMove.x == Piece.BoardPosition.x){
             Piece.has_moved = true;
             return true;
+        }
+        else if(AttemptedMove.y == Piece.BoardPosition.y + 1 && AttemptedMove.x == Piece.BoardPosition.x + 1){
+            //for now
+            return false;
         }
         else{
             std::cout << "That White Pawn Move is not valid" << std::endl;
@@ -215,11 +238,11 @@ class BOARD{
         int dx = AttemptedMove.x - Piece.BoardPosition.x;
         int dy = AttemptedMove.y - Piece.BoardPosition.y;
         //Used AI on this
-        if (std::abs(dx) != std::abs(dy)) {
+        if (std::abs(dx) == std::abs(dy)) {
             std::cout << "The white move is not valid (Not a diagonal line)" << std::endl;
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
     bool IsValidBlackBishopMove(PieceData &Piece, Vector2Int AttemptedMove){
         if (AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0) {
@@ -234,11 +257,11 @@ class BOARD{
         int dx = AttemptedMove.x - Piece.BoardPosition.x;
         int dy = AttemptedMove.y - Piece.BoardPosition.y;
 
-        if (std::abs(dx) != std::abs(dy)) {
+        if (std::abs(dx) == std::abs(dy)) {
             std::cout << "The white move is not valid (Not a diagonal line)" << std::endl;
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
     bool IsValidWhiteRookMove(PieceData &Piece, Vector2Int AttemptedMove){
         //used AI on movement
@@ -310,21 +333,61 @@ class BOARD{
         }
         return false;
     }
-    void MovePiece(std::vector<PieceData> & PiecesList,Vector2 Pointer){
+    bool IsValidwhiteKingMove(PieceData &Piece, Vector2Int AttemptedMove){
+        if (AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0) {
+            std::cout << "The white move is not valid (Out of bounds)" << std::endl;
+            return false;
+        }
+        else if (Piece.BoardPosition.x == AttemptedMove.x && Piece.BoardPosition.y == AttemptedMove.y) {
+            std::cout << "The white move is not valid (Cannot stay on the same square)" << std::endl;
+            return false;
+        }
+        else if(AttemptedMove.x == Piece.BoardPosition.x + 1 && AttemptedMove.y == Piece.BoardPosition.y){
+            return true;      
+        }
+        else if(AttemptedMove.x == Piece.BoardPosition.x - 1 && AttemptedMove.y == Piece.BoardPosition.y){
+            return true;      
+        }
+        else if(AttemptedMove.x == Piece.BoardPosition.x  && AttemptedMove.y == Piece.BoardPosition.y + 1){
+            return true;      
+        }
+        else if(AttemptedMove.x == Piece.BoardPosition.x  && AttemptedMove.y == Piece.BoardPosition.y - 1){
+            return true;      
+        }
+        else if(AttemptedMove.x == Piece.BoardPosition.x + 1  && AttemptedMove.y == Piece.BoardPosition.y + 1){
+            return true;      
+        }
+        else if(AttemptedMove.x == Piece.BoardPosition.x - 1  && AttemptedMove.y == Piece.BoardPosition.y - 1){
+            return true;      
+        }
+        else if(AttemptedMove.x == Piece.BoardPosition.x - 1  && AttemptedMove.y == Piece.BoardPosition.y + 1){
+            return true;      
+        }
+        else if(AttemptedMove.x == Piece.BoardPosition.x + 1 && AttemptedMove.y == Piece.BoardPosition.y - 1){
+            return true;      
+        }
+        return false;
+    }
+    void MovePiece(std::vector<PieceData> & PiecesList,Vector2 Pointer,std::string( & ChessGrid)[8][8]){
         for(PieceData & piece : PiecesList){
             if(piece.selected){
                 movecooldown ++;
                 if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && movecooldown > 15)
                 {
+
                     AttemptedToMovePos.x = int((Pointer.x - XaxiesOffset)/ cellsize);
                     AttemptedToMovePos.y = int((Pointer.y - XaxiesOffset) / cellsize);
+
                     std::cout << "piece.BoardPosition.x : " <<  piece.BoardPosition.x << "piece.BoardPosition.y : " << piece.BoardPosition.y << '\n';
                     if(piece.str_value == "wp"){
                         std::cout << "White pawm is found "<< std::endl;
                         if(IsValidWhitePawnMove(piece,AttemptedToMovePos)){
+                            PlaySound(MoveSound);
                             std::cout << "The White pawn move is vaild" << std::endl;
+                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
                             piece.BoardPosition.x = AttemptedToMovePos.x;
                             piece.BoardPosition.y = AttemptedToMovePos.y;
+                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
                             piece.selected = false;
                             std::cout << "Piece has been unselected" << std::endl;
                             movecooldown = 0;
@@ -335,12 +398,51 @@ class BOARD{
                             movecooldown = 0;
                         }
                     }
+                    if(piece.str_value ==  "wK"){
+                        if(IsValidwhiteKingMove(piece,AttemptedToMovePos)){
+                            PlaySound(MoveSound);
+                            std::cout << "The White king move is vaild" << std::endl;
+                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
+                            piece.BoardPosition.x = AttemptedToMovePos.x;
+                            piece.BoardPosition.y = AttemptedToMovePos.y;
+                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
+                            piece.selected = false;
+                            std::cout << "Piece has been unselected" << std::endl;
+                            movecooldown = 0;
+                        }
+                        else{
+                            piece.selected = false;
+                            movecooldown = 0;
+                            std::cout << "Piece has been unselected" << std::endl;
+                        }
+                    }
+                    if(piece.str_value ==  "bK"){
+                        if(IsValidwhiteKingMove(piece,AttemptedToMovePos)){
+                            PlaySound(MoveSound);
+                            std::cout << "The Black king move is vaild" << std::endl;
+                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
+                            piece.BoardPosition.x = AttemptedToMovePos.x;
+                            piece.BoardPosition.y = AttemptedToMovePos.y;
+                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
+                            piece.selected = false;
+                            std::cout << "Piece has been unselected" << std::endl;
+                            movecooldown = 0;
+                        }
+                        else{
+                            piece.selected = false;
+                            movecooldown = 0;
+                            std::cout << "Piece has been unselected" << std::endl;
+                        }
+                    }
                     if(piece.str_value == "bp"){
                         std::cout << "Black pawm is found "<< std::endl;
                         if(IsValidBlackPawnMove(piece,AttemptedToMovePos)){
+                            PlaySound(MoveSound);
                             std::cout << "The Black pawn move is vaild" << std::endl;
+                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
                             piece.BoardPosition.x = AttemptedToMovePos.x;
                             piece.BoardPosition.y = AttemptedToMovePos.y;
+                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
                             piece.selected = false;
                             std::cout << "Piece has been unselected" << std::endl;
                             movecooldown = 0;
@@ -352,11 +454,52 @@ class BOARD{
                         }
                     }
                     if(piece.str_value == "bk"){
-                        std::cout << "White Kinght is found " << '\n';
+                        std::cout << "Black Kinght is found " << '\n';
                         if(IsValidBlackKnightMove(piece,AttemptedToMovePos)){
-                            std::cout << "The White Knight move is valid " << '\n';
+                            PlaySound(MoveSound);
+                            std::cout << "The Black Knight move is valid " << '\n';
+                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
                             piece.BoardPosition.x = AttemptedToMovePos.x;
                             piece.BoardPosition.y = AttemptedToMovePos.y;
+                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
+                            piece.selected = false;
+                            std::cout << "Piece has been unselected" << std::endl;
+                            movecooldown = 0;
+                        }
+                        else{
+                            piece.selected = false;
+                            movecooldown = 0;
+                            std::cout << "Piece has been unselected" << std::endl;
+                        }
+                    }
+                    if(piece.str_value == "wk"){
+                        std::cout << "White Kinght is found " << '\n';
+                        if(IsValidWhiteKnightMove(piece,AttemptedToMovePos)){
+                            PlaySound(MoveSound);
+                            std::cout << "The White Knight move is valid " << '\n';
+                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
+                            piece.BoardPosition.x = AttemptedToMovePos.x;
+                            piece.BoardPosition.y = AttemptedToMovePos.y;
+                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
+                            piece.selected = false;
+                            std::cout << "Piece has been unselected" << std::endl;
+                            movecooldown = 0;
+                        }
+                        else{
+                            piece.selected = false;
+                            movecooldown = 0;
+                            std::cout << "Piece has been unselected" << std::endl;
+                        }
+                    }
+                    if(piece.str_value == "wb"){
+                        std::cout << "White Bishop is found" << '\n';
+                        if(IsValidWhiteBishopMove(piece,AttemptedToMovePos)){
+                            PlaySound(MoveSound);
+                            std::cout << "The White bishop move is valid " << '\n';
+                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
+                            piece.BoardPosition.x = AttemptedToMovePos.x;
+                            piece.BoardPosition.y = AttemptedToMovePos.y;
+                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
                             piece.selected = false;
                             std::cout << "Piece has been unselected" << std::endl;
                             movecooldown = 0;
@@ -370,9 +513,12 @@ class BOARD{
                     if(piece.str_value == "bb"){
                         std::cout << "Black Bishop is found" << '\n';
                         if(IsValidBlackBishopMove(piece,AttemptedToMovePos)){
+                            PlaySound(MoveSound);
                             std::cout << "The Black bishop move is valid " << '\n';
+                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
                             piece.BoardPosition.x = AttemptedToMovePos.x;
                             piece.BoardPosition.y = AttemptedToMovePos.y;
+                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
                             piece.selected = false;
                             std::cout << "Piece has been unselected" << std::endl;
                             movecooldown = 0;
@@ -386,9 +532,12 @@ class BOARD{
                     if(piece.str_value == "wr"){
                         std::cout << "White Rook is found" << '\n';
                         if(IsValidWhiteRookMove(piece,AttemptedToMovePos)){
+                            PlaySound(MoveSound);
                             std::cout << "The rook move is valid " << '\n';
+                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
                             piece.BoardPosition.x = AttemptedToMovePos.x;
                             piece.BoardPosition.y = AttemptedToMovePos.y;
+                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
                             piece.selected = false;
                             std::cout << "Piece has been unselected" << std::endl;
                             movecooldown = 0;
@@ -402,9 +551,12 @@ class BOARD{
                     if(piece.str_value == "br"){
                         std::cout << "black Rook is found" << '\n';
                         if(IsValidBlackRookMove(piece,AttemptedToMovePos)){
+                            PlaySound(MoveSound);
                             std::cout << "The rook move is valid " << '\n';
+                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
                             piece.BoardPosition.x = AttemptedToMovePos.x;
                             piece.BoardPosition.y = AttemptedToMovePos.y;
+                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
                             piece.selected = false;
                             std::cout << "Piece has been unselected" << std::endl;
                             movecooldown = 0;
@@ -418,9 +570,12 @@ class BOARD{
                     if(piece.str_value == "wq"){
                         std::cout << "white queen is found" << '\n';
                         if(IsValidWhiteQueenMove(piece,AttemptedToMovePos)){
+                            PlaySound(MoveSound);
                             std::cout << "The rook move is valid " << '\n';
+                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
                             piece.BoardPosition.x = AttemptedToMovePos.x;
                             piece.BoardPosition.y = AttemptedToMovePos.y;
+                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
                             piece.selected = false;
                             std::cout << "Piece has been unselected" << std::endl;
                             movecooldown = 0;
@@ -434,9 +589,12 @@ class BOARD{
                     if(piece.str_value == "bq"){
                         std::cout << "black queen is found" << '\n';
                         if(IsValidBlackQueenMove(piece,AttemptedToMovePos)){
+                            PlaySound(MoveSound);
                             std::cout << "The rook move is valid " << '\n';
+                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
                             piece.BoardPosition.x = AttemptedToMovePos.x;
                             piece.BoardPosition.y = AttemptedToMovePos.y;
+                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
                             piece.selected = false;
                             std::cout << "Piece has been unselected" << std::endl;
                             movecooldown = 0;
