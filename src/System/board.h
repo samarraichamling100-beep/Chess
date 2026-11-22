@@ -91,14 +91,114 @@ class BOARD{
                 YaxiesOffset + Piece.BoardPosition.y * cellsize + cellsize
             };
             if(Piece.selected){
-                DrawLineEx({TextureLeft.x,TextureLeft.y},{TextureLeft.EndPointX,TextureLeft.EndPointY},4,RED);
-                DrawLineEx({TextureRight.x,TextureRight.y},{TextureRight.EndPointX,TextureRight.EndPointY},4,RED);
-                DrawLineEx({TextureTop.x,TextureTop.y},{TextureTop.EndPointX,TextureTop.EndPointY},4,RED);
-                DrawLineEx({TextureDown.x,TextureDown.y},{TextureDown.EndPointX,TextureDown.EndPointY},4,RED);
+                DrawLineEx({TextureLeft.x,TextureLeft.y},{TextureLeft.EndPointX,TextureLeft.EndPointY},4,BLUE);
+                DrawLineEx({TextureRight.x,TextureRight.y},{TextureRight.EndPointX,TextureRight.EndPointY},4,BLUE);
+                DrawLineEx({TextureTop.x,TextureTop.y},{TextureTop.EndPointX,TextureTop.EndPointY},4,BLUE);
+                DrawLineEx({TextureDown.x,TextureDown.y},{TextureDown.EndPointX,TextureDown.EndPointY},4,BLUE);
             }
         }
     }
-    bool IsValidWhitePawnMove(PieceData & Piece,Vector2Int AttemptedMove){
+    bool IsValidPawnMove(PieceData & Piece,Vector2Int AttemptedMove,std::string (&ChessGrid)[8][8],PIECES & pieces,std::vector<PieceData> & PieceList){
+        if(Piece.str_value == "wp"){
+            if (AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0) {
+                std::cout << "The white move is not valid (Out of bounds)" << std::endl;
+                return false;
+            }
+            else if (Piece.BoardPosition.x == AttemptedMove.x && Piece.BoardPosition.y == AttemptedMove.y) {
+                std::cout << "The white move is not valid (Cannot stay on the same square)" << std::endl;
+                return false;
+            }
+            else if(AttemptedMove.y == Piece.BoardPosition.y + 1 && AttemptedMove.x == Piece.BoardPosition.x){
+                return true;
+            }
+            //Why is this not working
+            //Capture move
+            //if right diagonal side the str_value of that square is not empty 
+            else if(
+                AttemptedMove.y == Piece.BoardPosition.y + 1 && 
+                AttemptedMove.x == Piece.BoardPosition.x + 1 && 
+                ChessGrid[Piece.BoardPosition.y + 1][Piece.BoardPosition.x + 1] != ""
+            ){
+            }
+            else if(Piece.has_moved == false && AttemptedMove.y == Piece.BoardPosition.y + 2 && AttemptedMove.x == Piece.BoardPosition.x){
+                Piece.has_moved = true;
+                return true;
+            }
+            else{
+                std::cout << "That White Pawn Move is not valid" << std::endl;
+                return false;
+            }
+        }
+        else if(Piece.str_value == "bp"){
+            if (AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0) {
+                std::cout << "The white move is not valid (Out of bounds)" << std::endl;
+                return false;
+            }
+            else if (Piece.BoardPosition.x == AttemptedMove.x && Piece.BoardPosition.y == AttemptedMove.y) {
+                std::cout << "The white move is not valid (Cannot stay on the same square)" << std::endl;
+                return false;
+            }
+            else if(AttemptedMove.y == Piece.BoardPosition.y - 1 && AttemptedMove.x == Piece.BoardPosition.x){
+                return true;
+            }
+            else if(Piece.has_moved == false && AttemptedMove.y == Piece.BoardPosition.y - 2 && AttemptedMove.x == Piece.BoardPosition.x){
+                Piece.has_moved = true;
+                return true;
+            }
+            else{
+                std::cout << "That White Pawn Move is not valid" << std::endl;
+                return false;
+            }
+        }
+        return false;
+    }
+    bool IsValidKnightMove(PieceData & Piece,Vector2Int AttemptedMove){
+        if(AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0){
+            std::cout << "The white move is not valid" << std::endl;
+
+            return false;
+        }
+        if(Piece.str_value == "wk"|| Piece.str_value == "bk")
+        {
+            if(AttemptedMove.y == Piece.BoardPosition.y + 2 && AttemptedMove.x == Piece.BoardPosition.x + 1 
+            ){
+                std::cout << "The knight move is valid" << std::endl;
+                return true;
+            }
+            else if(AttemptedMove.y == Piece.BoardPosition.y + 2 && AttemptedMove.x == Piece.BoardPosition.x - 1){
+                std::cout << "The knight move is valid" << std::endl;
+                return true;
+            }
+            else if(AttemptedMove.y == Piece.BoardPosition.y - 2 && AttemptedMove.x == Piece.BoardPosition.x - 1){
+                std::cout << "The knight move is valid" << std::endl;
+                return true;
+            }
+            else if(AttemptedMove.y == Piece.BoardPosition.y - 2 && AttemptedMove.x == Piece.BoardPosition.x + 1){
+                std::cout << "The knight move is valid" << std::endl;
+                return true;
+            }
+            else if(AttemptedMove.x == Piece.BoardPosition.x - 2 && AttemptedMove.y == Piece.BoardPosition.y + 1){
+                std::cout << "The knight move is valid" << std::endl;
+                return true;
+            }
+            else if(AttemptedMove.x == Piece.BoardPosition.x - 2 && AttemptedMove.y == Piece.BoardPosition.y - 1){
+                std::cout << "The knight move is valid" << std::endl;
+                return true;
+            }
+            else if(AttemptedMove.x == Piece.BoardPosition.x + 2 && AttemptedMove.y == Piece.BoardPosition.y + 1){
+                std::cout << "The knight move is valid" << std::endl;
+                return true;
+            }
+            else if(AttemptedMove.x == Piece.BoardPosition.x + 2 && AttemptedMove.y == Piece.BoardPosition.y - 1){
+                std::cout << "The knight move is valid" << std::endl;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool IsValidBishopMove(PieceData &Piece, Vector2Int AttemptedMove) {
         if (AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0) {
             std::cout << "The white move is not valid (Out of bounds)" << std::endl;
             return false;
@@ -107,163 +207,18 @@ class BOARD{
             std::cout << "The white move is not valid (Cannot stay on the same square)" << std::endl;
             return false;
         }
-        else if(AttemptedMove.y == Piece.BoardPosition.y + 1 && AttemptedMove.x == Piece.BoardPosition.x){
-            return true;
+        else if(Piece.str_value == "wb"|| Piece.str_value == "bb"){
+            int dx = AttemptedMove.x - Piece.BoardPosition.x;
+            int dy = AttemptedMove.y - Piece.BoardPosition.y;
+            if (std::abs(dx) == std::abs(dy)) {
+                std::cout << "The white move is not valid (Not a diagonal line)" << std::endl;
+                return true;
+            }
         }
-        else if(Piece.has_moved == false && AttemptedMove.y == Piece.BoardPosition.y + 2 && AttemptedMove.x == Piece.BoardPosition.x){
-            Piece.has_moved = true;
-            return true;
-        }
-        else if(AttemptedMove.y == Piece.BoardPosition.y + 1 && AttemptedMove.x == Piece.BoardPosition.x + 1){
-            //for now
-            return false;
-        }
-        else{
-            std::cout << "That White Pawn Move is not valid" << std::endl;
-            return false;
-        }
-    }
-    bool IsValidBlackPawnMove(PieceData & Piece,Vector2Int AttemptedMove){
-        if(AttemptedMove.y == Piece.BoardPosition.y - 1){
-            return true;
-        }
-        if(Piece.has_moved == false && AttemptedMove.y == Piece.BoardPosition.y - 2){
-            Piece.has_moved = true;
-            return true;
-        }
-        else{
-            std::cout << "That Black Pawn Move is not valid" << std::endl;
-            return false;
-        }
-    }
-    bool IsValidWhiteKnightMove(PieceData & Piece,Vector2Int AttemptedMove){
-        if(AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0){
-            std::cout << "The white move is not valid" << std::endl;
 
-            return false;
-        }
-        else if(
-            AttemptedMove.y == Piece.BoardPosition.y + 2 && AttemptedMove.x == Piece.BoardPosition.x + 1 
-        ){
-            std::cout << "The knight move is valid" << std::endl;
-            return true;
-        }
-        else if(AttemptedMove.y == Piece.BoardPosition.y + 2 && AttemptedMove.x == Piece.BoardPosition.x - 1){
-            std::cout << "The knight move is valid" << std::endl;
-            return true;
-        }
-        else if(AttemptedMove.y == Piece.BoardPosition.y - 2 && AttemptedMove.x == Piece.BoardPosition.x - 1){
-            std::cout << "The knight move is valid" << std::endl;
-            return true;
-        }
-        else if(AttemptedMove.y == Piece.BoardPosition.y - 2 && AttemptedMove.x == Piece.BoardPosition.x + 1){
-            std::cout << "The knight move is valid" << std::endl;
-            return true;
-        }
-        else if(AttemptedMove.x == Piece.BoardPosition.x - 2 && AttemptedMove.y == Piece.BoardPosition.y + 1){
-            std::cout << "The knight move is valid" << std::endl;
-            return true;
-        }
-        else if(AttemptedMove.x == Piece.BoardPosition.x - 2 && AttemptedMove.y == Piece.BoardPosition.y - 1){
-            std::cout << "The knight move is valid" << std::endl;
-            return true;
-        }
-        else if(AttemptedMove.x == Piece.BoardPosition.x + 2 && AttemptedMove.y == Piece.BoardPosition.y + 1){
-            std::cout << "The knight move is valid" << std::endl;
-            return true;
-        }
-        else if(AttemptedMove.x == Piece.BoardPosition.x + 2 && AttemptedMove.y == Piece.BoardPosition.y - 1){
-            std::cout << "The knight move is valid" << std::endl;
-            return true;
-        }
-        else{
-            std::cout << "The white knight move is not valid" << std::endl;
-            return false;
-        }
-    }
-    bool IsValidBlackKnightMove(PieceData & Piece,Vector2Int AttemptedMove){
-        if(AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0){
-            std::cout << "The white move is not valid" << std::endl;
-
-            return false;
-        }
-        else if(
-            AttemptedMove.y == Piece.BoardPosition.y + 2 && AttemptedMove.x == Piece.BoardPosition.x + 1 
-        ){
-            std::cout << "The knight move is valid" << std::endl;
-            return true;
-        }
-        else if(AttemptedMove.y == Piece.BoardPosition.y + 2 && AttemptedMove.x == Piece.BoardPosition.x - 1){
-            std::cout << "The knight move is valid" << std::endl;
-            return true;
-        }
-        else if(AttemptedMove.y == Piece.BoardPosition.y - 2 && AttemptedMove.x == Piece.BoardPosition.x - 1){
-            std::cout << "The knight move is valid" << std::endl;
-            return true;
-        }
-        else if(AttemptedMove.y == Piece.BoardPosition.y - 2 && AttemptedMove.x == Piece.BoardPosition.x + 1){
-            std::cout << "The knight move is valid" << std::endl;
-            return true;
-        }
-        else if(AttemptedMove.x == Piece.BoardPosition.x - 2 && AttemptedMove.y == Piece.BoardPosition.y + 1){
-            std::cout << "The knight move is valid" << std::endl;
-            return true;
-        }
-        else if(AttemptedMove.x == Piece.BoardPosition.x - 2 && AttemptedMove.y == Piece.BoardPosition.y - 1){
-            std::cout << "The knight move is valid" << std::endl;
-            return true;
-        }
-        else if(AttemptedMove.x == Piece.BoardPosition.x + 2 && AttemptedMove.y == Piece.BoardPosition.y + 1){
-            std::cout << "The knight move is valid" << std::endl;
-            return true;
-        }
-        else if(AttemptedMove.x == Piece.BoardPosition.x + 2 && AttemptedMove.y == Piece.BoardPosition.y - 1){
-            std::cout << "The knight move is valid" << std::endl;
-            return true;
-        }
-        else{
-            std::cout << "The white knight move is not valid" << std::endl;
-            return false;
-        }
-    }
-    bool IsValidWhiteBishopMove(PieceData &Piece, Vector2Int AttemptedMove) {
-        if (AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0) {
-            std::cout << "The white move is not valid (Out of bounds)" << std::endl;
-            return false;
-        }
-        if (Piece.BoardPosition.x == AttemptedMove.x && Piece.BoardPosition.y == AttemptedMove.y) {
-            std::cout << "The white move is not valid (Cannot stay on the same square)" << std::endl;
-            return false;
-        }
-        int dx = AttemptedMove.x - Piece.BoardPosition.x;
-        int dy = AttemptedMove.y - Piece.BoardPosition.y;
-        //Used AI on this
-        if (std::abs(dx) == std::abs(dy)) {
-            std::cout << "The white move is not valid (Not a diagonal line)" << std::endl;
-            return true;
-        }
         return false;
     }
-    bool IsValidBlackBishopMove(PieceData &Piece, Vector2Int AttemptedMove){
-        if (AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0) {
-            std::cout << "The white move is not valid (Out of bounds)" << std::endl;
-            return false;
-        }
-        if (Piece.BoardPosition.x == AttemptedMove.x && Piece.BoardPosition.y == AttemptedMove.y) {
-            std::cout << "The white move is not valid (Cannot stay on the same square)" << std::endl;
-            return false;
-        }
-        //Used AI on this
-        int dx = AttemptedMove.x - Piece.BoardPosition.x;
-        int dy = AttemptedMove.y - Piece.BoardPosition.y;
-
-        if (std::abs(dx) == std::abs(dy)) {
-            std::cout << "The white move is not valid (Not a diagonal line)" << std::endl;
-            return true;
-        }
-        return false;
-    }
-    bool IsValidWhiteRookMove(PieceData &Piece, Vector2Int AttemptedMove){
+    bool IsValidRookMove(PieceData &Piece, Vector2Int AttemptedMove){
         //used AI on movement
         if (AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0) {
             std::cout << "The white move is not valid (Out of bounds)" << std::endl;
@@ -273,12 +228,15 @@ class BOARD{
             std::cout << "The white move is not valid (Cannot stay on the same square)" << std::endl;
             return false;
         }
-        else if (Piece.BoardPosition.x == AttemptedMove.x || Piece.BoardPosition.y == AttemptedMove.y){
-            return true;
+        else if(Piece.str_value == "wr"|| Piece.str_value == "br"){
+            if(Piece.BoardPosition.x == AttemptedMove.x || Piece.BoardPosition.y == AttemptedMove.y){
+                return true;
+            }
         }
         return false;
     }
-    bool IsValidBlackRookMove(PieceData &Piece, Vector2Int AttemptedMove){
+    bool IsValidQueenMove(PieceData &Piece, Vector2Int AttemptedMove){
+        //directly added rook and bishop movement
         if (AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0) {
             std::cout << "The white move is not valid (Out of bounds)" << std::endl;
             return false;
@@ -287,88 +245,59 @@ class BOARD{
             std::cout << "The white move is not valid (Cannot stay on the same square)" << std::endl;
             return false;
         }
-        else if (Piece.BoardPosition.x == AttemptedMove.x || Piece.BoardPosition.y == AttemptedMove.y){
-            return true;
-        }
-        return false;
-    }
-    bool IsValidWhiteQueenMove(PieceData &Piece, Vector2Int AttemptedMove){
-        //directly added rook and bishop
-        if (AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0) {
-            std::cout << "The white move is not valid (Out of bounds)" << std::endl;
-            return false;
-        }
-        else if (Piece.BoardPosition.x == AttemptedMove.x && Piece.BoardPosition.y == AttemptedMove.y) {
-            std::cout << "The white move is not valid (Cannot stay on the same square)" << std::endl;
-            return false;
-        }
-        int dx = AttemptedMove.x - Piece.BoardPosition.x;
-        int dy = AttemptedMove.y - Piece.BoardPosition.y;
+        else if(Piece.str_value == "wq"|| Piece.str_value == "bq"){
+            int dx = AttemptedMove.x - Piece.BoardPosition.x;
+            int dy = AttemptedMove.y - Piece.BoardPosition.y;
 
-        if(std::abs(dx) == std::abs(dy)){
-            return true;
-        }
-        else if (Piece.BoardPosition.x == AttemptedMove.x || Piece.BoardPosition.y == AttemptedMove.y){
-            return true;
-        }
-        return false;
-    }
-   bool IsValidBlackQueenMove(PieceData &Piece, Vector2Int AttemptedMove){
-        if (AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0) {
-            std::cout << "The white move is not valid (Out of bounds)" << std::endl;
-            return false;
-        }
-        else if (Piece.BoardPosition.x == AttemptedMove.x && Piece.BoardPosition.y == AttemptedMove.y) {
-            std::cout << "The white move is not valid (Cannot stay on the same square)" << std::endl;
-            return false;
-        }
-        int dx = AttemptedMove.x - Piece.BoardPosition.x;
-        int dy = AttemptedMove.y - Piece.BoardPosition.y;
+            if(std::abs(dx) == std::abs(dy)){
+                return true;
+            }
+            else if (Piece.BoardPosition.x == AttemptedMove.x || Piece.BoardPosition.y == AttemptedMove.y){
+                return true;
+            }
 
-        if(std::abs(dx) == std::abs(dy)){
-            return true;
-        }
-        else if (Piece.BoardPosition.x == AttemptedMove.x || Piece.BoardPosition.y == AttemptedMove.y){
-            return true;
         }
         return false;
     }
-    bool IsValidwhiteKingMove(PieceData &Piece, Vector2Int AttemptedMove){
-        if (AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0) {
-            std::cout << "The white move is not valid (Out of bounds)" << std::endl;
-            return false;
+    bool IsValidKingMove(PieceData &Piece, Vector2Int AttemptedMove){
+        if(Piece.str_value == "wK"|| Piece.str_value == "bK"){
+            if (AttemptedMove.y > 7 || AttemptedMove.y < 0 || AttemptedMove.x > 7 || AttemptedMove.x < 0) {
+                std::cout << "The white move is not valid (Out of bounds)" << std::endl;
+                return false;
+            }
+            else if (Piece.BoardPosition.x == AttemptedMove.x && Piece.BoardPosition.y == AttemptedMove.y) {
+                std::cout << "The white move is not valid (Cannot stay on the same square)" << std::endl;
+                return false;
+            }
+            else if(AttemptedMove.x == Piece.BoardPosition.x + 1 && AttemptedMove.y == Piece.BoardPosition.y){
+                return true;      
+            }
+            else if(AttemptedMove.x == Piece.BoardPosition.x - 1 && AttemptedMove.y == Piece.BoardPosition.y){
+                return true;      
+            }
+            else if(AttemptedMove.x == Piece.BoardPosition.x  && AttemptedMove.y == Piece.BoardPosition.y + 1){
+                return true;      
+            }
+            else if(AttemptedMove.x == Piece.BoardPosition.x  && AttemptedMove.y == Piece.BoardPosition.y - 1){
+                return true;      
+            }
+            else if(AttemptedMove.x == Piece.BoardPosition.x + 1  && AttemptedMove.y == Piece.BoardPosition.y + 1){
+                return true;      
+            }
+            else if(AttemptedMove.x == Piece.BoardPosition.x - 1  && AttemptedMove.y == Piece.BoardPosition.y - 1){
+                return true;      
+            }
+            else if(AttemptedMove.x == Piece.BoardPosition.x - 1  && AttemptedMove.y == Piece.BoardPosition.y + 1){
+                return true;      
+            }
+            else if(AttemptedMove.x == Piece.BoardPosition.x + 1 && AttemptedMove.y == Piece.BoardPosition.y - 1){
+                return true;      
+            }
         }
-        else if (Piece.BoardPosition.x == AttemptedMove.x && Piece.BoardPosition.y == AttemptedMove.y) {
-            std::cout << "The white move is not valid (Cannot stay on the same square)" << std::endl;
-            return false;
-        }
-        else if(AttemptedMove.x == Piece.BoardPosition.x + 1 && AttemptedMove.y == Piece.BoardPosition.y){
-            return true;      
-        }
-        else if(AttemptedMove.x == Piece.BoardPosition.x - 1 && AttemptedMove.y == Piece.BoardPosition.y){
-            return true;      
-        }
-        else if(AttemptedMove.x == Piece.BoardPosition.x  && AttemptedMove.y == Piece.BoardPosition.y + 1){
-            return true;      
-        }
-        else if(AttemptedMove.x == Piece.BoardPosition.x  && AttemptedMove.y == Piece.BoardPosition.y - 1){
-            return true;      
-        }
-        else if(AttemptedMove.x == Piece.BoardPosition.x + 1  && AttemptedMove.y == Piece.BoardPosition.y + 1){
-            return true;      
-        }
-        else if(AttemptedMove.x == Piece.BoardPosition.x - 1  && AttemptedMove.y == Piece.BoardPosition.y - 1){
-            return true;      
-        }
-        else if(AttemptedMove.x == Piece.BoardPosition.x - 1  && AttemptedMove.y == Piece.BoardPosition.y + 1){
-            return true;      
-        }
-        else if(AttemptedMove.x == Piece.BoardPosition.x + 1 && AttemptedMove.y == Piece.BoardPosition.y - 1){
-            return true;      
-        }
+
         return false;
     }
-    void MovePiece(std::vector<PieceData> & PiecesList,Vector2 Pointer,std::string( & ChessGrid)[8][8]){
+    void MovePiece(std::vector<PieceData> & PiecesList,Vector2 Pointer,std::string( & ChessGrid)[8][8],PIECES & pieces,std::vector<PieceData>PieceList){
         for(PieceData & piece : PiecesList){
             if(piece.selected){
                 movecooldown ++;
@@ -379,231 +308,106 @@ class BOARD{
                     AttemptedToMovePos.y = int((Pointer.y - XaxiesOffset) / cellsize);
 
                     std::cout << "piece.BoardPosition.x : " <<  piece.BoardPosition.x << "piece.BoardPosition.y : " << piece.BoardPosition.y << '\n';
-                    if(piece.str_value == "wp"){
-                        std::cout << "White pawm is found "<< std::endl;
-                        if(IsValidWhitePawnMove(piece,AttemptedToMovePos)){
-                            PlaySound(MoveSound);
-                            std::cout << "The White pawn move is vaild" << std::endl;
-                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
-                            piece.BoardPosition.x = AttemptedToMovePos.x;
-                            piece.BoardPosition.y = AttemptedToMovePos.y;
-                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
-                            piece.selected = false;
-                            std::cout << "Piece has been unselected" << std::endl;
-                            movecooldown = 0;
-                        }
-                        else{
-                            std::cout << "Piece has been unselected" << std::endl;
-                            piece.selected = false;
-                            movecooldown = 0;
-                        }
+                    if(IsValidPawnMove(piece,AttemptedToMovePos,ChessGrid,pieces,PieceList)){
+                        PlaySound(MoveSound);
+                        std::cout << "The White pawn move is vaild" << std::endl;
+                        ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
+                        piece.BoardPosition.x = AttemptedToMovePos.x;
+                        piece.BoardPosition.y = AttemptedToMovePos.y;
+                        ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
+                        piece.selected = false;
+                        std::cout << "Piece has been unselected" << std::endl;
+                        movecooldown = 0;
                     }
-                    if(piece.str_value ==  "wK"){
-                        if(IsValidwhiteKingMove(piece,AttemptedToMovePos)){
-                            PlaySound(MoveSound);
-                            std::cout << "The White king move is vaild" << std::endl;
-                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
-                            piece.BoardPosition.x = AttemptedToMovePos.x;
-                            piece.BoardPosition.y = AttemptedToMovePos.y;
-                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
-                            piece.selected = false;
-                            std::cout << "Piece has been unselected" << std::endl;
-                            movecooldown = 0;
-                        }
-                        else{
-                            piece.selected = false;
-                            movecooldown = 0;
-                            std::cout << "Piece has been unselected" << std::endl;
-                        }
+                    else{
+                        std::cout << "Piece has been unselected" << std::endl;
+                        piece.selected = false;
+                        movecooldown = 0;
                     }
-                    if(piece.str_value ==  "bK"){
-                        if(IsValidwhiteKingMove(piece,AttemptedToMovePos)){
-                            PlaySound(MoveSound);
-                            std::cout << "The Black king move is vaild" << std::endl;
-                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
-                            piece.BoardPosition.x = AttemptedToMovePos.x;
-                            piece.BoardPosition.y = AttemptedToMovePos.y;
-                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
-                            piece.selected = false;
-                            std::cout << "Piece has been unselected" << std::endl;
-                            movecooldown = 0;
-                        }
-                        else{
-                            piece.selected = false;
-                            movecooldown = 0;
-                            std::cout << "Piece has been unselected" << std::endl;
-                        }
+                    
+                    if(IsValidKnightMove(piece,AttemptedToMovePos)){
+                        PlaySound(MoveSound);
+                        std::cout << "The White king move is vaild" << std::endl;
+                        ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
+                        piece.BoardPosition.x = AttemptedToMovePos.x;
+                        piece.BoardPosition.y = AttemptedToMovePos.y;
+                        ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
+                        piece.selected = false;
+                        std::cout << "Piece has been unselected" << std::endl;
+                        movecooldown = 0;
                     }
-                    if(piece.str_value == "bp"){
-                        std::cout << "Black pawm is found "<< std::endl;
-                        if(IsValidBlackPawnMove(piece,AttemptedToMovePos)){
-                            PlaySound(MoveSound);
-                            std::cout << "The Black pawn move is vaild" << std::endl;
-                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
-                            piece.BoardPosition.x = AttemptedToMovePos.x;
-                            piece.BoardPosition.y = AttemptedToMovePos.y;
-                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
-                            piece.selected = false;
-                            std::cout << "Piece has been unselected" << std::endl;
-                            movecooldown = 0;
-                        }
-                        else{
-                            piece.selected = false;
-                            movecooldown = 0;
-                            std::cout << "Piece has been unselected" << std::endl;
-                        }
+                    else{
+                        piece.selected = false;
+                        movecooldown = 0;
+                        std::cout << "Piece has been unselected" << std::endl;
+
                     }
-                    if(piece.str_value == "bk"){
-                        std::cout << "Black Kinght is found " << '\n';
-                        if(IsValidBlackKnightMove(piece,AttemptedToMovePos)){
-                            PlaySound(MoveSound);
-                            std::cout << "The Black Knight move is valid " << '\n';
-                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
-                            piece.BoardPosition.x = AttemptedToMovePos.x;
-                            piece.BoardPosition.y = AttemptedToMovePos.y;
-                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
-                            piece.selected = false;
-                            std::cout << "Piece has been unselected" << std::endl;
-                            movecooldown = 0;
-                        }
-                        else{
-                            piece.selected = false;
-                            movecooldown = 0;
-                            std::cout << "Piece has been unselected" << std::endl;
-                        }
+                    if(IsValidBishopMove(piece,AttemptedToMovePos)){
+                        PlaySound(MoveSound);
+                        std::cout << "The White king move is vaild" << std::endl;
+                        ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
+                        piece.BoardPosition.x = AttemptedToMovePos.x;
+                        piece.BoardPosition.y = AttemptedToMovePos.y;
+                        ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
+                        piece.selected = false;
+                        std::cout << "Piece has been unselected" << std::endl;
+                        movecooldown = 0;
                     }
-                    if(piece.str_value == "wk"){
-                        std::cout << "White Kinght is found " << '\n';
-                        if(IsValidWhiteKnightMove(piece,AttemptedToMovePos)){
-                            PlaySound(MoveSound);
-                            std::cout << "The White Knight move is valid " << '\n';
-                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
-                            piece.BoardPosition.x = AttemptedToMovePos.x;
-                            piece.BoardPosition.y = AttemptedToMovePos.y;
-                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
-                            piece.selected = false;
-                            std::cout << "Piece has been unselected" << std::endl;
-                            movecooldown = 0;
-                        }
-                        else{
-                            piece.selected = false;
-                            movecooldown = 0;
-                            std::cout << "Piece has been unselected" << std::endl;
-                        }
+                    else{
+                        piece.selected = false;
+                        movecooldown = 0;
+                        std::cout << "Piece has been unselected" << std::endl;
+
                     }
-                    if(piece.str_value == "wb"){
-                        std::cout << "White Bishop is found" << '\n';
-                        if(IsValidWhiteBishopMove(piece,AttemptedToMovePos)){
-                            PlaySound(MoveSound);
-                            std::cout << "The White bishop move is valid " << '\n';
-                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
-                            piece.BoardPosition.x = AttemptedToMovePos.x;
-                            piece.BoardPosition.y = AttemptedToMovePos.y;
-                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
-                            piece.selected = false;
-                            std::cout << "Piece has been unselected" << std::endl;
-                            movecooldown = 0;
-                        }
-                        else{
-                            piece.selected = false;
-                            movecooldown = 0;
-                            std::cout << "Piece has been unselected" << std::endl;
-                        }
+                    if(IsValidRookMove(piece,AttemptedToMovePos)){
+                        PlaySound(MoveSound);
+                        std::cout << "The White king move is vaild" << std::endl;
+                        ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
+                        piece.BoardPosition.x = AttemptedToMovePos.x;
+                        piece.BoardPosition.y = AttemptedToMovePos.y;
+                        ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
+                        piece.selected = false;
+                        std::cout << "Piece has been unselected" << std::endl;
+                        movecooldown = 0;
                     }
-                    if(piece.str_value == "bb"){
-                        std::cout << "Black Bishop is found" << '\n';
-                        if(IsValidBlackBishopMove(piece,AttemptedToMovePos)){
-                            PlaySound(MoveSound);
-                            std::cout << "The Black bishop move is valid " << '\n';
-                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
-                            piece.BoardPosition.x = AttemptedToMovePos.x;
-                            piece.BoardPosition.y = AttemptedToMovePos.y;
-                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
-                            piece.selected = false;
-                            std::cout << "Piece has been unselected" << std::endl;
-                            movecooldown = 0;
-                        }
-                        else{
-                            piece.selected = false;
-                            movecooldown = 0;
-                            std::cout << "Piece has been unselected" << std::endl;
-                        }
+                    else{
+                        piece.selected = false;
+                        movecooldown = 0;
+                        std::cout << "Piece has been unselected" << std::endl;
+
                     }
-                    if(piece.str_value == "wr"){
-                        std::cout << "White Rook is found" << '\n';
-                        if(IsValidWhiteRookMove(piece,AttemptedToMovePos)){
-                            PlaySound(MoveSound);
-                            std::cout << "The rook move is valid " << '\n';
-                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
-                            piece.BoardPosition.x = AttemptedToMovePos.x;
-                            piece.BoardPosition.y = AttemptedToMovePos.y;
-                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
-                            piece.selected = false;
-                            std::cout << "Piece has been unselected" << std::endl;
-                            movecooldown = 0;
-                        }
-                        else{
-                            piece.selected = false;
-                            movecooldown = 0;
-                            std::cout << "Piece has been unselected" << std::endl;
-                        }
+                    if(IsValidQueenMove(piece,AttemptedToMovePos)){
+                        PlaySound(MoveSound);
+                        std::cout << "The White king move is vaild" << std::endl;
+                        ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
+                        piece.BoardPosition.x = AttemptedToMovePos.x;
+                        piece.BoardPosition.y = AttemptedToMovePos.y;
+                        ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
+                        piece.selected = false;
+                        std::cout << "Piece has been unselected" << std::endl;
+                        movecooldown = 0;
                     }
-                    if(piece.str_value == "br"){
-                        std::cout << "black Rook is found" << '\n';
-                        if(IsValidBlackRookMove(piece,AttemptedToMovePos)){
-                            PlaySound(MoveSound);
-                            std::cout << "The rook move is valid " << '\n';
-                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
-                            piece.BoardPosition.x = AttemptedToMovePos.x;
-                            piece.BoardPosition.y = AttemptedToMovePos.y;
-                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
-                            piece.selected = false;
-                            std::cout << "Piece has been unselected" << std::endl;
-                            movecooldown = 0;
-                        }
-                        else{
-                            piece.selected = false;
-                            movecooldown = 0;
-                            std::cout << "Piece has been unselected" << std::endl;
-                        }
+                    else{
+                        piece.selected = false;
+                        movecooldown = 0;
+                        std::cout << "Piece has been unselected" << std::endl;
+
                     }
-                    if(piece.str_value == "wq"){
-                        std::cout << "white queen is found" << '\n';
-                        if(IsValidWhiteQueenMove(piece,AttemptedToMovePos)){
-                            PlaySound(MoveSound);
-                            std::cout << "The rook move is valid " << '\n';
-                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
-                            piece.BoardPosition.x = AttemptedToMovePos.x;
-                            piece.BoardPosition.y = AttemptedToMovePos.y;
-                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
-                            piece.selected = false;
-                            std::cout << "Piece has been unselected" << std::endl;
-                            movecooldown = 0;
-                        }
-                        else{
-                            piece.selected = false;
-                            movecooldown = 0;
-                            std::cout << "Piece has been unselected" << std::endl;
-                        }
+                    if(IsValidKingMove(piece,AttemptedToMovePos)){
+                        PlaySound(MoveSound);
+                        std::cout << "The White king move is vaild" << std::endl;
+                        ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
+                        piece.BoardPosition.x = AttemptedToMovePos.x;
+                        piece.BoardPosition.y = AttemptedToMovePos.y;
+                        ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
+                        piece.selected = false;
+                        std::cout << "Piece has been unselected" << std::endl;
+                        movecooldown = 0;
                     }
-                    if(piece.str_value == "bq"){
-                        std::cout << "black queen is found" << '\n';
-                        if(IsValidBlackQueenMove(piece,AttemptedToMovePos)){
-                            PlaySound(MoveSound);
-                            std::cout << "The rook move is valid " << '\n';
-                            ChessGrid[piece.BoardPosition.y][piece.BoardPosition.x] = "";
-                            piece.BoardPosition.x = AttemptedToMovePos.x;
-                            piece.BoardPosition.y = AttemptedToMovePos.y;
-                            ChessGrid[ AttemptedToMovePos.y][ AttemptedToMovePos.x] = piece.str_value;
-                            piece.selected = false;
-                            std::cout << "Piece has been unselected" << std::endl;
-                            movecooldown = 0;
-                        }
-                        else{
-                            piece.selected = false;
-                            movecooldown = 0;
-                            std::cout << "Piece has been unselected" << std::endl;
-                        }
+                    else{
+                        piece.selected = false;
+                        movecooldown = 0;
+                        std::cout << "Piece has been unselected" << std::endl;
                     }
                 }
 
