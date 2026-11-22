@@ -30,7 +30,7 @@ int main()
             pieces.Draw_Pieces();
             pieces.Check_SelectiomOfPieces();
             board.DrawHightLightOfSelection(pieces.PiecesList);
-            board.MovePiece(pieces.PiecesList,pieces.MousePos,board.ChessGrid);
+            board.MovePiece(pieces.PiecesList,pieces.MousePos,board.ChessGrid,pieces,pieces.PiecesList);
         }
         EndDrawing();
     }
