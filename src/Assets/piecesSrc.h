@@ -14,11 +14,12 @@ struct point{
     float EndPointY;
 };
 struct PieceData{
-    Texture textur;
+    Texture textur {};
     Vector2Int BoardPosition{};
     bool selected{};
     bool has_moved{};
     std::string str_value{};
+    int listPos = {};
 };
 
 class PIECES{
@@ -73,7 +74,9 @@ class PIECES{
                     Whitepawn.textur = LoadTextureFromImage(WhitePawnImage);
                     Whitepawn.BoardPosition = {row,col};
                     Whitepawn.str_value = "wp";
+                    Whitepawn.listPos = PiecesList.size();
                     PiecesList.push_back(Whitepawn);
+                    UnloadImage(WhitePawnImage);
                 }
                 if(ChessGrid[col][row] == "wk"){
                     PieceData WhiteKnight;
@@ -83,6 +86,7 @@ class PIECES{
                     WhiteKnight.BoardPosition = {row,col};
                     WhiteKnight.str_value = "wk";
                     PiecesList.push_back(WhiteKnight);
+                    UnloadImage(WhiteKinghtImage);
                 }
                 
                 if(ChessGrid[col][row] == "wb"){
@@ -93,6 +97,7 @@ class PIECES{
                     WhiteBishop.BoardPosition = {row,col};
                     WhiteBishop.str_value = "wb";
                     PiecesList.push_back(WhiteBishop);
+                    UnloadImage(WhiteBishopImage);
                 }
                 if(ChessGrid[col][row] == "wq"){
                     PieceData WhiteQueen;
@@ -102,6 +107,7 @@ class PIECES{
                     WhiteQueen.BoardPosition = {row,col};
                     WhiteQueen.str_value = "wq";
                     PiecesList.push_back(WhiteQueen);
+                    UnloadImage(WhiteQueenImage);
                 }
                 if(ChessGrid[col][row] == "wK"){
                     PieceData WhiteKing;
@@ -111,6 +117,7 @@ class PIECES{
                     WhiteKing.BoardPosition = {row,col};
                     WhiteKing.str_value     = "wK";
                     PiecesList.push_back(WhiteKing);
+                    UnloadImage(WhiteKingImage);
                 }
                 if(ChessGrid[col][row] == "wr"){
                     PieceData WhiteRook;
@@ -120,7 +127,7 @@ class PIECES{
                     WhiteRook.BoardPosition = {row,col};
                     WhiteRook.str_value     = "wr";
                     PiecesList.push_back(WhiteRook);
-
+                    UnloadImage(WhiteRookImage);
                 }
                 if(ChessGrid[col][row] == "bp"){
                     PieceData Blackpawn;
@@ -130,6 +137,8 @@ class PIECES{
                     Blackpawn.BoardPosition = {row,col};
                     Blackpawn.str_value = "bp";
                     PiecesList.push_back(Blackpawn);
+                    UnloadImage(WhitePawnImage);
+
                 }
                 if(ChessGrid[col][row] == "bk"){
                     PieceData BlackKinght;
@@ -139,6 +148,7 @@ class PIECES{
                     BlackKinght.BoardPosition = {row,col};
                     BlackKinght.str_value = "bk";
                     PiecesList.push_back(BlackKinght);
+                    UnloadImage(BlackKinghtImage);
                 }
                 
                 if(ChessGrid[col][row] == "bb"){
@@ -149,6 +159,7 @@ class PIECES{
                     BlackBishop.BoardPosition = {row,col};
                     BlackBishop.str_value = "bb";
                     PiecesList.push_back(BlackBishop);
+                    UnloadImage(BlackBishopImage);
                 }
                 if(ChessGrid[col][row] == "bq"){
                     PieceData BlackQueen;
@@ -158,6 +169,7 @@ class PIECES{
                     BlackQueen.BoardPosition = {row,col};
                     BlackQueen.str_value = "bq";
                     PiecesList.push_back(BlackQueen);
+                    UnloadImage(BlackQueenImage);
                 }
                 if(ChessGrid[col][row] == "bK"){
                     PieceData BlackKing;
@@ -167,6 +179,7 @@ class PIECES{
                     BlackKing.BoardPosition = {row,col};
                     BlackKing.str_value = "bK";
                     PiecesList.push_back(BlackKing);
+                    UnloadImage(BlackKingImage);
                 }
                 if(ChessGrid[col][row] == "br"){
                     PieceData BlackRook;
@@ -176,8 +189,14 @@ class PIECES{
                     BlackRook.BoardPosition = {row,col};
                     BlackRook.str_value     = "br";
                     PiecesList.push_back(BlackRook);
+                    UnloadImage(BlackRookImage);
                 }
             }
+        }
+    }
+    void Unload_Texture(std::vector<PieceData> &PiecesList){
+        for(PieceData & Piece : PiecesList){
+            UnloadTexture(Piece.textur);
         }
     }
     void Draw_Pieces(){
